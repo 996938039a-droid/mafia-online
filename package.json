@@ -1,0 +1,11 @@
+{
+  "name": "mafia-online",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Online Mafia with realtime chat, video and a voiced narrator. Netlify + Supabase Realtime + Google Sheets history.",
+  "scripts": {
+    "test": "node tests/engine.test.mjs",
+    "dev": "netlify dev"
+  }
+}

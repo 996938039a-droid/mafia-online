@@ -1,0 +1,17 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# Camera / microphone must be delegated to the video provider's iframe.
+# If you self-host Jitsi, add your own domain to both lists.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = "camera=(self \"https://meet.jit.si\" \"https://8x8.vc\"), microphone=(self \"https://meet.jit.si\" \"https://8x8.vc\"), display-capture=(self \"https://meet.jit.si\" \"https://8x8.vc\")"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"

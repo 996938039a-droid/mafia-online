@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mafia Online</title>
+  <meta name="description" content="Play Mafia online with friends: realtime chat, video, a voiced narrator and custom rules." />
+  <meta name="theme-color" content="#08080a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-theme="noir" data-phase="lobby">
+  <div class="grain" aria-hidden="true"></div>
+
+  <div id="app">
+    <!-- ============ HOME ============ -->
+    <section id="home" class="view home">
+      <div class="home-card">
+        <div class="eyebrow">A game of deception</div>
+        <h1 class="brand">MAFIA</h1>
+        <p class="lead">The city sleeps. Someone among you doesn't.</p>
+
+        <label class="field">
+          <span>Your name</span>
+          <input id="nameInput" maxlength="18" autocomplete="off" placeholder="Enter a name" />
+        </label>
+        <div class="swatches" id="swatches" aria-label="Avatar colour"></div>
+
+        <button id="btnCreate" class="btn primary wide">Create a room</button>
+
+        <div class="or"><span>or join with a code</span></div>
+
+        <div class="join-row">
+          <input id="codeInput" class="code-input" maxlength="6" autocomplete="off" autocapitalize="characters" placeholder="CODE" />
+          <button id="btnJoin" class="btn">Join</button>
+        </div>
+
+        <div id="rejoin" class="rejoin hidden"></div>
+        <div id="homeError" class="error hidden" role="alert"></div>
+      </div>
+      <div id="leaderboard" class="board hidden"></div>
+      <p class="fine">Best with friends on a video call. Up to as many players as your group can fit.</p>
+    </section>
+
+    <!-- ============ ROOM ============ -->
+    <section id="room" class="view room hidden" data-tab="game">
+      <header class="topbar">
+        <button id="codeBtn" class="code-pill" title="Copy invite link">
+          <span class="k">ROOM</span><b id="codeText"></b>
+        </button>
+        <div class="phase-pill"><span id="phaseIcon" class="ico"></span><span id="phaseText"></span></div>
+        <div class="timer"><span id="timerText">--</span></div>
+        <div class="top-actions">
+          <span id="connDot" class="conn" title="Connection"></span>
+          <button id="btnSettings" class="icon-btn" title="My settings" aria-label="My settings">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          </button>
+          <button id="btnLeave" class="icon-btn" title="Leave room" aria-label="Leave room">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="timer-bar"><i id="timerBar"></i></div>
+      <div id="waitBanner" class="wait-banner hidden"></div>
+
+      <div class="layout">
+        <main class="stage" id="stage">
+          <div id="narration" class="narration" aria-live="polite"></div>
+          <div id="modBar" class="modbar hidden"></div>
+          <div id="roleCard" class="role-card hidden"></div>
+          <div id="actionCard" class="card action"></div>
+
+          <div class="players-wrap">
+            <h3 class="section-title" id="playersTitle">Players</h3>
+            <div id="players" class="players"></div>
+          </div>
+
+          <div id="lobbySettings" class="card settings hidden"></div>
+          <div id="overCard" class="card over hidden"></div>
+        </main>
+
+        <aside class="side">
+          <div id="videoBox" class="video-box">
+            <div id="videoHolder" class="video-holder"></div>
+            <div id="videoCta" class="video-cta">
+              <p id="videoNote">Cameras and mics switch off automatically at night, and for ghosts.</p>
+              <button id="btnVideo" class="btn">Join video</button>
+            </div>
+            <button id="btnVideoLeave" class="btn small video-leave hidden" type="button">Leave video</button>
+            <div id="videoVeil" class="video-veil"><span></span></div>
+          </div>
+
+          <div id="chatBox" class="chat-box">
+            <div id="chatTabs" class="chat-tabs"></div>
+            <div id="chatLog" class="chat-log"></div>
+            <form id="chatForm" class="chat-form" autocomplete="off">
+              <input id="chatInput" maxlength="300" placeholder="Say something…" />
+              <button class="btn small primary" type="submit">Send</button>
+            </form>
+          </div>
+        </aside>
+      </div>
+
+      <nav class="tabbar" id="tabbar">
+        <button data-tab="game" class="on">Game</button>
+        <button data-tab="video">Video</button>
+        <button data-tab="chat">Chat<i id="chatDot" class="dot hidden"></i></button>
+      </nav>
+    </section>
+  </div>
+
+  <div id="veil" class="veil" aria-hidden="true">
+    <div class="moon"></div>
+  </div>
+  <div id="veilText" class="veil-text" aria-hidden="true"></div>
+
+  <dialog id="settingsDialog" class="dialog">
+    <form method="dialog">
+      <h2>My settings</h2>
+      <p class="muted small">Stored on this device only.</p>
+
+      <div class="srow"><div><b>Narrator voice</b><span>The system moderator reads each phase aloud.</span></div><label class="switch"><input type="checkbox" id="pVoiceOn" /><i></i></label></div>
+      <div class="srow stack"><div><b>Voice</b></div><select id="pVoice"></select></div>
+      <div class="srow stack"><div><b>Speed</b><span id="pRateV"></span></div><input type="range" id="pRate" min="0.6" max="1.4" step="0.05" /></div>
+      <div class="srow stack"><div><b>Pitch</b><span id="pPitchV"></span></div><input type="range" id="pPitch" min="0.4" max="1.6" step="0.05" /></div>
+      <div class="srow stack"><div><b>Volume</b><span id="pVolumeV"></span></div><input type="range" id="pVolume" min="0" max="1" step="0.05" /></div>
+      <div class="srow"><div><b>Ambient sound</b><span>Night rain and drone, soft day pad.</span></div><label class="switch"><input type="checkbox" id="pAmbient" /><i></i></label></div>
+      <div class="srow"><div><b>Sound effects</b><span>Bells, gavel, countdown ticks.</span></div><label class="switch"><input type="checkbox" id="pSfx" /><i></i></label></div>
+      <div class="srow"><div><b>Reduce motion</b><span>Calmer transitions.</span></div><label class="switch"><input type="checkbox" id="pMotion" /><i></i></label></div>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="btnTestVoice">Test voice</button>
+        <button class="btn primary" value="close">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

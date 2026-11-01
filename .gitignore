@@ -1,0 +1,4 @@
+node_modules
+.netlify
+public/js/config.local.js
+.env
